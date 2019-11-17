@@ -1,31 +1,43 @@
 package manager;
 
+import java.util.Scanner;
+
 import controll.GamePlay;
 import models.HandCards;
 
 public class GameManager {
 
 	private GamePlay gamePlay;
-	private int numOfPlayed;
-	private int currentPlayed;
+	private GameEvent gamEvent;
+	private Scanner scanner;
 	
-	public void StartGame() {
-		
-		numOfPlayed = 4;
-		// Chia bai
-		//gamePlay.setNumOfPlayed(numOfPlayed);
-		gamePlay.Deal();
-		
-		// Cho nguoi dau tien danh bai
-		currentPlayed = 0;
-		gamePlay.Play();
-		this.PlayGame();
+	private int numOfPlayer;
+	
+	public GameManager(GamePlay gamePlay, Scanner scanner ,GameEvent gameEvent) {
+		this.gamePlay = gamePlay;
+		this.scanner = scanner;
+		this.gamEvent = gameEvent;
 	}
 	
+	
+	public void StartGame() {
+
+		// Chia bai
+		gamePlay.Deal();
+	
+		// Cho nguoi co quan 3 bich danh
+		
+		
+		//currentPlayed = 0;
+		//gamePlay.Play();
+		//this.PlayGame();
+	}
+	
+	/*
 	public void PlayGame() {
 		
 		// Tim nguoi danh tiep theo
-		currentPlayed = gamePlay.NextPlayer();
+		//currentPlayed = gamePlay.NextPlayer();
 		
 		while(true) {
 			
@@ -37,8 +49,8 @@ public class GameManager {
 				// Danh bai
 				// Kiem tra neu danh hop le thi cho danh
 				
-				if(gamePlay.TestValid()) {
-					gamePlay.Play();
+				//if(gamePlay.TestValid()) {
+					/gamePlay.Play();
 				}else {
 					// Danh lai hoac bo luot
 				}
@@ -67,4 +79,5 @@ public class GameManager {
 			}
 		}
 	}
+	*/
 }

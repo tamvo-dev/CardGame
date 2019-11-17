@@ -145,7 +145,7 @@ public class Rules {
 		switch(type){
 		
 		case Rules.THROWING_SINGLE:
-			if(arr.length == 1 && arr[0].getValue() > 0)
+			if(arr.length == 1)
 				return true;
 			break;
 		

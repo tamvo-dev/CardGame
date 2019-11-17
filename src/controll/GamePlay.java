@@ -13,7 +13,8 @@ public class GamePlay {
 	private int justPlayed;
 	private int activatingPlayed;
 	private int rank;
-	private Rules rules;
+	private Card[] currentCard;
+	private int currentType;
 	
 	public static final int NUM_CARDS = 52;
 	
@@ -82,9 +83,17 @@ public class GamePlay {
 		arrPlayeds[currentPlayer].setActivated(false);
 	}
 	
-	public boolean TestValid() {
-		  
-		return false;
+	public boolean TestValid(Card[] arr) {
+		
+		if(!Rules.IsValid(currentType, arr)) {
+			return false;
+		} 
+		else if(Rules.IsWin(currentType, arr, this.currentCard)) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 	public void ActivatePlayed(int currentPlayer) {
@@ -95,8 +104,27 @@ public class GamePlay {
 		arrPlayeds[currentPlayer].setActivated(false);
 	}
 	
-	public void Play() {
+	public void Play(int currentPlayer) {
 		
+		currentCard = arrPlayeds[currentPlayer].getArrSelCards();
+		justPlayed = currentPlayer;
+		
+		HandCards player = arrPlayeds[currentPlayer];
+		Card[] arrCards = player.getArrCards();
+		
+		int numOfRemainCards = player.getNumOfRemainCards() - currentCard.length;
+		player.setNumOfRemainCards(numOfRemainCards);
+		
+		for(int i=0; i<currentCard.length; i++) {
+			for(int j=0; j<arrCards.length; j++) {
+				if(currentCard[i].equals(arrCards[j])) {
+					
+					// Danh dau nhung quan bai da danh
+					arrCards[j].setPlay(true);
+					break;
+				}
+			}
+		}
 	}
 
 	public int getStatus() {
@@ -143,13 +171,12 @@ public class GamePlay {
 		this.rank = rank;
 	}
 
-	public Rules getRules() {
-		return rules;
+	public int getCurrentType() {
+		return currentType;
 	}
 
-	public void setRules(Rules rules) {
-		this.rules = rules;
+	public void setCurrentType(int currentType) {
+		this.currentType = currentType;
 	}
-	
 	
 }
