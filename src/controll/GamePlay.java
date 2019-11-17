@@ -1,5 +1,8 @@
 package controll;
 
+import java.util.Random;
+
+import models.Card;
 import models.HandCards;
 
 public class GamePlay {
@@ -11,23 +14,54 @@ public class GamePlay {
 	private int activatingPlayed;
 	private int rank;
 	private Rules rules;
-	static GamePlay instance = null;
 	
-	// Khong cho phep tao moi GamePlay
-	private GamePlay() {
+	public static final int NUM_CARDS = 52;
+	
+	public GamePlay(int numOfPlayed) {
 		
+		this.numOfPlayed = numOfPlayed;
+		this.arrPlayeds = new HandCards[numOfPlayed];
 	}
-	
-	// Tao mot the hien cua GamePlay
-	public static GamePlay getInstance() {
-		if(instance == null) {
-			instance = new GamePlay();
+
+	public void Deal() {
+		
+		// Tao mang danh dau
+		int arr[] = new int[NUM_CARDS];
+		for(int i = 0; i< NUM_CARDS; i++) {
+			arr[i] = 1;
 		}
 		
-		return instance;
-	}
-	
-	public void Deal() {
+		// Tao mang cac quan bai
+		Card[] arrCards = new Card[NUM_CARDS];
+		for(int i=0; i<NUM_CARDS; i++) {	
+			int value = i%13 + 3;
+			int type =  i%4;
+			arrCards[i] = new Card();
+			arrCards[i].setPlay(false);
+			arrCards[i].setValue(value);
+			arrCards[i].setType(type);
+		}
+		
+		// Chia bai cho moi nguoi choi
+		Random ran = new Random();
+		for(int i=0; i<numOfPlayed; i++) {
+			arrPlayeds[i] = new HandCards();
+			
+			Card[] arrCardsPlayer = new Card[HandCards.NUM_OF_CARDS];
+			int num = 0;
+			while(num < HandCards.NUM_OF_CARDS) {
+				
+				int index = ran.nextInt(NUM_CARDS);
+				while(arr[index] == 0) {
+					index = ran.nextInt(NUM_CARDS);
+				}
+				arrCardsPlayer[num] = arrCards[index];
+				arr[index] = 0;
+				num++;
+			}
+			
+			arrPlayeds[i].setArrCards(arrCardsPlayer);
+		}
 		
 	}
 	
@@ -66,10 +100,6 @@ public class GamePlay {
 
 	public int getNumOfPlayed() {
 		return numOfPlayed;
-	}
-
-	public void setNumOfPlayed(int numOfPlayed) {
-		this.numOfPlayed = numOfPlayed;
 	}
 
 	public HandCards[] getArrPlayeds() {

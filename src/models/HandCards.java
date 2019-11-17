@@ -2,7 +2,6 @@ package models;
 
 public class HandCards {
 
-	private int numOfCards;
 	private int numOfSelectedCards;
 	private int numOfRemainCards;
 	private Card[] arrCards;
@@ -11,14 +10,15 @@ public class HandCards {
 	private boolean isActivated;
 	private int rank;
 	
+	public static final int NUM_OF_CARDS = 13;
+	
 	public HandCards() {
 		
 	}
 	
-	public HandCards(int numOfCards, int numOfSelectedCards, int numOfRemainCards, Card[] arrCards, Card[] arrSelCards,
+	public HandCards(int numOfSelectedCards, int numOfRemainCards, Card[] arrCards, Card[] arrSelCards,
 			int status, boolean isActivated, int rank) {
 
-		this.numOfCards = numOfCards;
 		this.numOfSelectedCards = numOfSelectedCards;
 		this.numOfRemainCards = numOfRemainCards;
 		this.arrCards = arrCards;
@@ -26,14 +26,6 @@ public class HandCards {
 		this.status = status;
 		this.isActivated = isActivated;
 		this.rank = rank;
-	}
-
-	public int getNumOfCards() {
-		return numOfCards;
-	}
-
-	public void setNumOfCards(int numOfCards) {
-		this.numOfCards = numOfCards;
 	}
 
 	public int getNumOfSelectedCards() {

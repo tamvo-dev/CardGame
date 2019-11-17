@@ -12,10 +12,10 @@ public class Card {
 	public static final int VALUE_A = 14;
 	public static final int VALUE_2 = 15;
 	
-	public static final int TYPE_BICH = 1;
-	public static final int TYPE_CHUON = 2;
-	public static final int TYPE_RO = 3;
-	public static final int TYPE_CO = 4;
+	public static final int TYPE_BICH = 0;
+	public static final int TYPE_CHUON = 1;
+	public static final int TYPE_RO = 2;
+	public static final int TYPE_CO = 3;
 
 	public Card() {
 		

@@ -13,7 +13,7 @@ public class GameManager {
 		
 		numOfPlayed = 4;
 		// Chia bai
-		gamePlay.setNumOfPlayed(numOfPlayed);
+		//gamePlay.setNumOfPlayed(numOfPlayed);
 		gamePlay.Deal();
 		
 		// Cho nguoi dau tien danh bai
