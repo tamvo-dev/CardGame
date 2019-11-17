@@ -12,6 +12,8 @@ public class Main {
 		
 		gamePlay = new GamePlay(4);
 		gamePlay.Deal();
-		System.out.println("end");
+		System.out.println(gamePlay.NextPlayer());
+		gamePlay.setJustPlayed(gamePlay.NextPlayer());
+		System.out.println(gamePlay.NextPlayer());
 	}
 }

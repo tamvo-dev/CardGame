@@ -66,24 +66,33 @@ public class GamePlay {
 	}
 	
 	public int NextPlayer() {
-		return 0;
+		
+		int nextPlayer = justPlayed;
+		for(int i=1; i<numOfPlayed; i++) {
+			nextPlayer = (nextPlayer + 1) % numOfPlayed;
+			if(arrPlayeds[nextPlayer].isActivated())
+				return nextPlayer;
+		}
+		
+		return -1;
 	}
 	
-	public void RemovePlayer() {
-		
+	public void RemovePlayer(int currentPlayer) {
+		arrPlayeds[currentPlayer].setStatus(HandCards.STATUS_OFF);
+		arrPlayeds[currentPlayer].setActivated(false);
 	}
 	
 	public boolean TestValid() {
-		
+		  
 		return false;
 	}
 	
-	public void ActivatePlayed() {
-		
+	public void ActivatePlayed(int currentPlayer) {
+		arrPlayeds[currentPlayer].setActivated(true);
 	}
 	
-	public void Ignore() {
-		
+	public void Ignore(int currentPlayer) {
+		arrPlayeds[currentPlayer].setActivated(false);
 	}
 	
 	public void Play() {

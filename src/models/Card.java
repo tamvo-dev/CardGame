@@ -12,10 +12,10 @@ public class Card {
 	public static final int VALUE_A = 14;
 	public static final int VALUE_2 = 15;
 	
-	public static final int TYPE_BICH = 0;
-	public static final int TYPE_CHUON = 1;
-	public static final int TYPE_RO = 2;
-	public static final int TYPE_CO = 3;
+	public static final int TYPE_SPADES = 0;
+	public static final int TYPE_CLUBS = 1;
+	public static final int TYPE_DIAMONDS = 2;
+	public static final int TYPE_HEARTS = 3;
 
 	public Card() {
 		
@@ -53,7 +53,48 @@ public class Card {
 
 	@Override
 	public String toString() {
-		return "Card [value=" + value + ", type=" + type + ", isPlay=" + isPlay + "]";
+		String result = "";
+		
+		switch(value) {
+		case 11:
+			result += "J";
+			break;
+		
+		case 12:
+			result += "Q";
+			break;
+			
+		case 13:
+			result += "K";
+			break;
+			
+		case 14:
+			result += "A";
+			break;
+			
+		case 15:
+			result += "2";
+			break;
+			
+		default:
+			result += value;	
+		}
+		
+		switch(type) {
+		case 0:
+			result += "S";
+			break;
+		case 1:
+			result += "C";
+			break;
+		case 2:
+			result += "D";
+			break;
+		case 3:
+			result += "H";
+			break;
+		}
+		return result;
 	}
 	
 }

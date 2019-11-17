@@ -11,21 +11,15 @@ public class HandCards {
 	private int rank;
 	
 	public static final int NUM_OF_CARDS = 13;
+	public static final int STATUS_ON = 1;
+	public static final int STATUS_OFF = 0;
 	
 	public HandCards() {
 		
-	}
-	
-	public HandCards(int numOfSelectedCards, int numOfRemainCards, Card[] arrCards, Card[] arrSelCards,
-			int status, boolean isActivated, int rank) {
-
-		this.numOfSelectedCards = numOfSelectedCards;
-		this.numOfRemainCards = numOfRemainCards;
-		this.arrCards = arrCards;
-		this.arrSelCards = arrSelCards;
-		this.status = status;
-		this.isActivated = isActivated;
-		this.rank = rank;
+		numOfRemainCards = NUM_OF_CARDS;
+		rank = -1;
+		isActivated = true;
+		status = STATUS_ON;
 	}
 
 	public int getNumOfSelectedCards() {
