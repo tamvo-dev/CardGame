@@ -1,7 +1,6 @@
 package controll;
 
 import models.Card;
-import models.HandCards;
 
 public class Rules {
 	

@@ -24,6 +24,7 @@ public class GamePlay {
 		this.status = STATUS_ON;
 		this.numOfPlayer = numOfPlayer;
 		this.arrPlayers = new HandCards[numOfPlayer];
+		this.rank = 1;
 	}
 
 	public void Deal() {
@@ -76,7 +77,9 @@ public class GamePlay {
 		int nextPlayer = justPlayer;
 		for(int i=1; i<numOfPlayer; i++) {
 			nextPlayer = (nextPlayer + 1) % numOfPlayer;
-			if(arrPlayers[nextPlayer].isActivated())
+			if(arrPlayers[nextPlayer].isActivated() 
+					&& nextPlayer != justPlayer 
+					&& arrPlayers[nextPlayer].getStatus() != HandCards.STATUS_OFF)
 				return nextPlayer;
 		}
 		
@@ -106,7 +109,6 @@ public class GamePlay {
 	}
 	
 	public void Ignore(int currentPlayer) {
-		justPlayer = currentPlayer;
 		arrPlayers[currentPlayer].setActivated(false);
 	}
 	

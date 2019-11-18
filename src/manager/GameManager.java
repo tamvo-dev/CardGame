@@ -31,14 +31,14 @@ public class GameManager {
 		// Chia bai
 		gamePlay.Deal();
 	
-		// Cho nguoi co quan 3 chuon danh dau tien
+		// Cho nguoi co quan 3 bich danh dau tien
 		for(int i=0; i<numOfPlayer; i++) {
 			
 			HandCards player = gamePlay.getPlayer(i);
 			
 			for(int j=0; j<HandCards.NUM_OF_CARDS; j++) {
 				Card card = player.getCard(j);
-				if(card.getValue() == 3 && card.getType() == Card.TYPE_CLUBS) {
+				if(card.getValue() == 3 && card.getType() == Card.TYPE_SPADES) {
 					// nguoi co quyen danh bai
 					gamePlay.setActivatingPlayer(i);
 					FirstPlay();
@@ -48,6 +48,12 @@ public class GameManager {
 	}
 	
 	public void FirstPlay() {
+		
+		for(int i=0; i<numOfPlayer; i++) {
+			HandCards player = gamePlay.getPlayer(i);
+			if(player.getStatus() != HandCards.STATUS_OFF)
+				player.setActivated(true);
+		}
 		
 		int position = gamePlay.getActivatingPlayer();
 		currentPlayer = gamePlay.getPlayer(position);
@@ -87,28 +93,16 @@ public class GameManager {
 		while( nextPlayer != -1) {
 			
 			gamePlay.setActivatingPlayer(nextPlayer);
-			int select = 0;
-			do {
-				
-				System.out.println("Player " + (nextPlayer + 1) + "you want to gamble or skip ?");
-				System.out.println("1. Play");
-				System.out.println("2. Skip");
-				System.out.print("Enter the selection: ");
-				select = Integer.parseInt(scanner.nextLine());
-			}while(select < 1 || select > 2);
-			
-			if(select == 2) {
-				gamePlay.Ignore(nextPlayer);
-			}
-			else {
-				ThrowingCards();
-			}
-			
+			ThrowingCards();
 			nextPlayer = gamePlay.NextPlayer();
-			
+			System.out.println("Nextplayer: " + (nextPlayer + 1));
+			System.out.println("Just: " + (gamePlay.getJustPlayer() + 1));
 		}
 		
 		if(gamePlay.getStatus() != GamePlay.STATUS_OFF) {
+			System.out.println("Fisrt play");
+			int justplayer = gamePlay.getJustPlayer();
+			gamePlay.setActivatingPlayer(justplayer);
 			FirstPlay();
 		}
 		else {
@@ -121,30 +115,57 @@ public class GameManager {
 		int indexPlayer = gamePlay.getActivatingPlayer();
 		currentPlayer = gamePlay.getPlayer(indexPlayer);
 		
-		currentPlayer.ShowCards();
-		System.out.print("Please play cards: ");
-		String line = scanner.nextLine();
-		String[] items = line.split(" ");
-		int arrIndex[] = new int[items.length];
-		for(int i=0; i<items.length; i++) {
-			arrIndex[i] = Integer.parseInt(items[i]);
-		}
-		Card[] arrSelCards = new Card[items.length];
-		for(int i=0; i<items.length; i++) {
+		do {
+			int select = 0;
+			do {
+				
+				System.out.println("Player " + (indexPlayer + 1) + " you want to gamble or skip ?");
+				System.out.println("1. Play");
+				System.out.println("2. Skip");
+				System.out.print("Enter the selection: ");
+				select = Integer.parseInt(scanner.nextLine());
+			}while(select < 1 || select > 2);
 			
-			int index = arrIndex[i];
-			arrSelCards[i] = currentPlayer.getCard(index);
-		}
-		currentPlayer.setArrSelCards(arrSelCards);
+			if(select == 2) {
+				gamePlay.Ignore(indexPlayer);
+				return;
+			}
+			
+			currentPlayer.ShowCards();
+			System.out.print("Please play cards: ");
+			String line = scanner.nextLine();
+			String[] items = line.split(" ");
+			int arrIndex[] = new int[items.length];
+			for(int i=0; i<items.length; i++) {
+				arrIndex[i] = Integer.parseInt(items[i]);
+			}
+			Card[] arrSelCards = new Card[items.length];
+			for(int i=0; i<items.length; i++) {
+				
+				int index = arrIndex[i];
+				arrSelCards[i] = currentPlayer.getCard(index);
+			}
+			currentPlayer.setArrSelCards(arrSelCards);
+			
+			// Kiem tra neu bai danh phai lon hon moi hop le
+			boolean isWin = Rules.IsWin(currentType, arrSelCards, currentCard);
+			boolean isValid = Rules.IsValid(currentType, arrSelCards);
+			if(isValid && isWin) {
+				gamePlay.Play(indexPlayer);
+				// Kiem tra neu da danh het bai thi set rank cho nguoi choi
+				if(currentPlayer.isWin()) {
+					int rank = gamePlay.getRank();
+					currentPlayer.setStatus(HandCards.STATUS_OFF);
+					currentPlayer.setRank(rank);
+					gamePlay.setRank(rank + 1);
+				}
+				return;
+			}
+			else {
+				System.out.println("Invalid gambling");
+			}
+		}while(true);
 		
-		// Kiem tra neu bai danh phai lon hon moi hop le
-		boolean isValid = Rules.IsWin(currentType, arrSelCards, currentCard);
-		if(isValid) {
-			gamePlay.Play(indexPlayer);
-		}
-		else {
-			System.out.println("Danh thua");
-		}
 	}
 	
 }

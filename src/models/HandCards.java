@@ -42,6 +42,15 @@ public class HandCards {
 			}
 		}
 	}
+	
+	public boolean isWin() {
+		// Neu co bat ki la bai nao chua danh tuc la chua ve nhat duoc
+		for(int i=0; i<arrCards.length; i++) {
+			if(arrCards[i].isPlay() == false)
+				return false;
+		}
+		return true;
+	}
 
 	public int getNumOfSelectedCards() {
 		return numOfSelectedCards;

@@ -17,7 +17,7 @@ public class Main implements GameEvent {
 	
 	public Main() {
 		scanner = new Scanner(System.in);
-		this.OnStartGame();
+		OnStartGame();
 	}
 
 	@Override
