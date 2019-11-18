@@ -10,6 +10,7 @@ public class Rules {
 	public static final int THROWING_TRIPLE = 3;
 	public static final int THROWING_QUADRA = 4;
 	public static final int THROWING_ORDER = 5;
+	public static final int THROWING_UNKNOWN = 6;
 
 	public static boolean IsSingleCardWin(Card c1, Card c2) {
 		
@@ -140,6 +141,44 @@ public class Rules {
 		
 	}
 	
+	public static int CheckType(Card[] arr) {
+		
+		int length = arr.length;
+		switch (length) {
+		case 1:
+			return THROWING_SINGLE;
+			
+		case 2:
+			if(IsDouble(arr))
+				return THROWING_DOUBLE; 
+			else
+				return THROWING_UNKNOWN;
+			
+		case 3:
+			if(IsTriple(arr)) 
+				return THROWING_TRIPLE;
+			else if(IsOrder(arr))
+				return THROWING_ORDER;
+			else
+				return THROWING_UNKNOWN;
+			
+		case 4:
+			if(IsQuadra(arr)) 
+				return THROWING_TRIPLE;
+			else if(IsOrder(arr))
+				return THROWING_ORDER;
+			else
+				return THROWING_UNKNOWN;
+			
+		default:
+			if(IsOrder(arr)) 
+				return THROWING_ORDER;
+			else 
+				return THROWING_UNKNOWN;
+		}
+		
+	}
+	
 	public static boolean IsValid(int type, Card[] arr) {
 		
 		switch(type){
@@ -168,9 +207,7 @@ public class Rules {
 			if(arr.length >= 3 && IsOrder(arr))
 				return true;
 			break;
-			
-		default:
-			throw new IllegalArgumentException("Unexpected value: " + type);
+	
 		}
 		
 		return false;

@@ -17,9 +17,11 @@ public class GamePlay {
 	private int currentType;
 	
 	public static final int NUM_CARDS = 52;
+	public static final int STATUS_ON = 1;
+	public static final int STATUS_OFF = 0;
 	
 	public GamePlay(int numOfPlayed) {
-		
+		this.status = STATUS_ON;
 		this.numOfPlayed = numOfPlayed;
 		this.arrPlayeds = new HandCards[numOfPlayed];
 	}

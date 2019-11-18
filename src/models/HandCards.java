@@ -1,5 +1,7 @@
 package models;
 
+import controll.Rules;
+
 public class HandCards {
 
 	private int numOfSelectedCards;
@@ -15,11 +17,21 @@ public class HandCards {
 	public static final int STATUS_OFF = 0;
 	
 	public HandCards() {
-		
 		numOfRemainCards = NUM_OF_CARDS;
 		rank = -1;
 		isActivated = true;
 		status = STATUS_ON;
+	}
+	
+	public void showCards() {
+		Rules.SortCards(arrCards);
+		for(int i=0; i<arrCards.length; i++) {
+			if(arrCards[i].isPlay() == false) {
+				// Format String
+				System.out.println(i + "    ->    " + arrCards[i].toString() + " ");
+			}
+		}
+		System.out.print("\n");
 	}
 
 	public int getNumOfSelectedCards() {

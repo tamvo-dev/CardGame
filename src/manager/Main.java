@@ -26,7 +26,7 @@ public class Main implements GameEvent {
 	public void OnStartGame() {
 		
 		System.out.print("Enter the number of players: ");
-		int num = scanner.nextInt();
+		int num = Integer.parseInt(scanner.nextLine());
 		gamePlay = new GamePlay(num);
 		gameManager = new GameManager(gamePlay, scanner,this);
 		gameManager.StartGame();
