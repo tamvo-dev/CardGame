@@ -14,13 +14,14 @@ public class GameManager {
 	private Scanner scanner;
 	private HandCards currentPlayer = null;
 	private int currentType;
+	private Card[] currentCard;
 	private int numOfPlayer;
 	
 	public GameManager(GamePlay gamePlay, Scanner scanner ,GameEvent gameEvent) {
 		this.gamePlay = gamePlay;
 		this.scanner = scanner;
 		this.gamEvent = gameEvent;
-		this.numOfPlayer = gamePlay.getArrPlayeds().length;
+		this.numOfPlayer = gamePlay.getNumOfPlayer();
 		this.currentType = Rules.THROWING_UNKNOWN;
 	}
 	
@@ -32,14 +33,14 @@ public class GameManager {
 	
 		// Cho nguoi co quan 3 chuon danh dau tien
 		for(int i=0; i<numOfPlayer; i++) {
-			HandCards[] arrPlayer = gamePlay.getArrPlayeds();
-			HandCards player = arrPlayer[i];
-			Card[] arrCard = player.getArrCards();
 			
-			for(int j=0; j<arrCard.length; j++) {
-				if(arrCard[j].getValue() == 3 && arrCard[j].getType() == Card.TYPE_CLUBS) {
+			HandCards player = gamePlay.getPlayer(i);
+			
+			for(int j=0; j<HandCards.NUM_OF_CARDS; j++) {
+				Card card = player.getCard(j);
+				if(card.getValue() == 3 && card.getType() == Card.TYPE_CLUBS) {
 					// nguoi co quyen danh bai
-					gamePlay.setActivatingPlayed(i);
+					gamePlay.setActivatingPlayer(i);
 					FirstPlay();
 				}
 			}
@@ -48,9 +49,9 @@ public class GameManager {
 	
 	public void FirstPlay() {
 		
-		int indexPlayer = gamePlay.getActivatingPlayed();
-		currentPlayer = gamePlay.getArrPlayeds()[indexPlayer];
-		currentPlayer.showCards();
+		int position = gamePlay.getActivatingPlayer();
+		currentPlayer = gamePlay.getPlayer(position);
+		currentPlayer.ShowCards();
 		System.out.print("Please play cards: ");
 		String line = scanner.nextLine();
 		String[] items = line.split(" ");
@@ -60,18 +61,21 @@ public class GameManager {
 		}
 		Card[] arrSelCards = new Card[items.length];
 		for(int i=0; i<items.length; i++) {
+			
 			int index = arrIndex[i];
-			Card[] arrCards = currentPlayer.getArrCards();
-			arrSelCards[i] = arrCards[index];
+			arrSelCards[i] = currentPlayer.getCard(index);
 		}
 		currentPlayer.setArrSelCards(arrSelCards);
 		currentType = Rules.CheckType(arrSelCards);
 		// Kiem tra nguoi choi danh bai co hop le khong
 		if(currentType == Rules.THROWING_UNKNOWN || Rules.IsValid(currentType, arrSelCards) == false) {
-			System.out.println("Ban danh bai khong hop le");
+			System.out.println("Your gambling is invalid!");
+			FirstPlay();
 		}
 		else {
-			System.out.println("Hop le");
+			gamePlay.Play(position);
+			currentCard = arrSelCards;
+			PlayGame();
 		}
 		
 	}
@@ -79,65 +83,67 @@ public class GameManager {
 	
 	public void PlayGame() {
 		
-		while(gamePlay.getStatus() == GamePlay.STATUS_ON) {
+		int nextPlayer = gamePlay.NextPlayer();
+		while( nextPlayer != -1) {
 			
-			int index = gamePlay.getActivatingPlayed();
-			currentPlayer = gamePlay.getArrPlayeds()[index];
-			currentPlayer.showCards();
-			System.out.println("Please play cards: ");
-			String line = scanner.nextLine();
-			String[] items = line.split(" ");
-			int arrIndex[] = new int[items.length];
-			for(int i=0; i<items.length; i++) {
-				arrIndex[i] = Integer.parseInt(items[i]);
-			}
-			
-			// Kiem tra nguoi choi danh bai co hop le khong
-			
-			
-			gamePlay.setStatus(GamePlay.STATUS_OFF);
-			/*
-			while(isPlay) {
-			
-				System.out.print("");
-			}
-			// Hoi nguoi choi co muon danh khong
-			if(false) {
-				// Khong danh
-				gamePlay.Ignore();
-			}else {
-				// Danh bai
-				// Kiem tra neu danh hop le thi cho danh
+			gamePlay.setActivatingPlayer(nextPlayer);
+			int select = 0;
+			do {
 				
-				//if(gamePlay.TestValid()) {
-					/gamePlay.Play();
-				}else {
-					// Danh lai hoac bo luot
-				}
-				
+				System.out.println("Player " + (nextPlayer + 1) + "you want to gamble or skip ?");
+				System.out.println("1. Play");
+				System.out.println("2. Skip");
+				System.out.print("Enter the selection: ");
+				select = Integer.parseInt(scanner.nextLine());
+			}while(select < 1 || select > 2);
+			
+			if(select == 2) {
+				gamePlay.Ignore(nextPlayer);
+			}
+			else {
+				ThrowingCards();
 			}
 			
-			// Kiem tra nguoi choi da ve dich chua
-			// Neu ve dich thi xet rank co nguoi do va loai nguoi do khoi cuoc choi
-			if(false) {
-				gamePlay.RemovePlayer();
-			}
+			nextPlayer = gamePlay.NextPlayer();
 			
-			// Kiem tra xem cac nguoi choi da ve dich het chua ?
-			// Neu het roi thi ket thuc game
+		}
+		
+		if(gamePlay.getStatus() != GamePlay.STATUS_OFF) {
+			FirstPlay();
+		}
+		else {
+			gamEvent.OnDestroyGame();
+		}
+	}
+	
+	public void ThrowingCards() {
+		
+		int indexPlayer = gamePlay.getActivatingPlayer();
+		currentPlayer = gamePlay.getPlayer(indexPlayer);
+		
+		currentPlayer.ShowCards();
+		System.out.print("Please play cards: ");
+		String line = scanner.nextLine();
+		String[] items = line.split(" ");
+		int arrIndex[] = new int[items.length];
+		for(int i=0; i<items.length; i++) {
+			arrIndex[i] = Integer.parseInt(items[i]);
+		}
+		Card[] arrSelCards = new Card[items.length];
+		for(int i=0; i<items.length; i++) {
 			
-			// Tim nguoi choi tiep theo
-			currentPlayed = gamePlay.NextPlayer();
-			
-			// Neu het nguoi danh thi cho nguoi choi danh thi cho nguoi choi cuoi cung danh kieu bai khac 
-			// va dong thoi kich hoat lai tat ca nguoi choi
-			
-			if(currentPlayed == -1) {
-				for(int i=0; i<numOfPlayed; i++) {
-					gamePlay.ActivatePlayed();
-				}
-			}
-			*/
+			int index = arrIndex[i];
+			arrSelCards[i] = currentPlayer.getCard(index);
+		}
+		currentPlayer.setArrSelCards(arrSelCards);
+		
+		// Kiem tra neu bai danh phai lon hon moi hop le
+		boolean isValid = Rules.IsWin(currentType, arrSelCards, currentCard);
+		if(isValid) {
+			gamePlay.Play(indexPlayer);
+		}
+		else {
+			System.out.println("Danh thua");
 		}
 	}
 	

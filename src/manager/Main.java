@@ -3,8 +3,6 @@ package manager;
 import java.util.Scanner;
 
 import controll.GamePlay;
-import controll.Rules;
-import models.Card;
 
 public class Main implements GameEvent {
 	

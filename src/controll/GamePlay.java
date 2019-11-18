@@ -8,10 +8,10 @@ import models.HandCards;
 public class GamePlay {
 
 	private int status;
-	private int numOfPlayed;
-	private HandCards[] arrPlayeds;
-	private int justPlayed;
-	private int activatingPlayed;
+	private int numOfPlayer;
+	private HandCards[] arrPlayers;
+	private int justPlayer;
+	private int activatingPlayer;
 	private int rank;
 	private Card[] currentCard;
 	private int currentType;
@@ -20,10 +20,10 @@ public class GamePlay {
 	public static final int STATUS_ON = 1;
 	public static final int STATUS_OFF = 0;
 	
-	public GamePlay(int numOfPlayed) {
+	public GamePlay(int numOfPlayer) {
 		this.status = STATUS_ON;
-		this.numOfPlayed = numOfPlayed;
-		this.arrPlayeds = new HandCards[numOfPlayed];
+		this.numOfPlayer = numOfPlayer;
+		this.arrPlayers = new HandCards[numOfPlayer];
 	}
 
 	public void Deal() {
@@ -47,8 +47,8 @@ public class GamePlay {
 		
 		// Chia bai cho moi nguoi choi
 		Random ran = new Random();
-		for(int i=0; i<numOfPlayed; i++) {
-			arrPlayeds[i] = new HandCards();
+		for(int i=0; i<numOfPlayer; i++) {
+			
 			
 			Card[] arrCardsPlayer = new Card[HandCards.NUM_OF_CARDS];
 			int num = 0;
@@ -63,17 +63,20 @@ public class GamePlay {
 				num++;
 			}
 			
-			arrPlayeds[i].setArrCards(arrCardsPlayer);
+			arrPlayers[i] = new HandCards();
+			arrPlayers[i].setArrCards(arrCardsPlayer);
+			String name = "Player " + (i + 1);
+			arrPlayers[i].setName(name);
 		}
 		
 	}
 	
 	public int NextPlayer() {
 		
-		int nextPlayer = justPlayed;
-		for(int i=1; i<numOfPlayed; i++) {
-			nextPlayer = (nextPlayer + 1) % numOfPlayed;
-			if(arrPlayeds[nextPlayer].isActivated())
+		int nextPlayer = justPlayer;
+		for(int i=1; i<numOfPlayer; i++) {
+			nextPlayer = (nextPlayer + 1) % numOfPlayer;
+			if(arrPlayers[nextPlayer].isActivated())
 				return nextPlayer;
 		}
 		
@@ -81,8 +84,8 @@ public class GamePlay {
 	}
 	
 	public void RemovePlayer(int currentPlayer) {
-		arrPlayeds[currentPlayer].setStatus(HandCards.STATUS_OFF);
-		arrPlayeds[currentPlayer].setActivated(false);
+		arrPlayers[currentPlayer].setStatus(HandCards.STATUS_OFF);
+		arrPlayers[currentPlayer].setActivated(false);
 	}
 	
 	public boolean TestValid(Card[] arr) {
@@ -98,31 +101,31 @@ public class GamePlay {
 		}
 	}
 	
-	public void ActivatePlayed(int currentPlayer) {
-		arrPlayeds[currentPlayer].setActivated(true);
+	public void ActivatePlayer(int currentPlayer) {
+		arrPlayers[currentPlayer].setActivated(true);
 	}
 	
 	public void Ignore(int currentPlayer) {
-		arrPlayeds[currentPlayer].setActivated(false);
+		justPlayer = currentPlayer;
+		arrPlayers[currentPlayer].setActivated(false);
 	}
 	
 	public void Play(int currentPlayer) {
 		
-		currentCard = arrPlayeds[currentPlayer].getArrSelCards();
-		justPlayed = currentPlayer;
+		currentCard = arrPlayers[currentPlayer].getArrSelCards();
+		justPlayer = currentPlayer;
 		
-		HandCards player = arrPlayeds[currentPlayer];
-		Card[] arrCards = player.getArrCards();
+		HandCards player = arrPlayers[currentPlayer];
 		
 		int numOfRemainCards = player.getNumOfRemainCards() - currentCard.length;
 		player.setNumOfRemainCards(numOfRemainCards);
 		
 		for(int i=0; i<currentCard.length; i++) {
-			for(int j=0; j<arrCards.length; j++) {
-				if(currentCard[i].equals(arrCards[j])) {
+			for(int j=0; j<HandCards.NUM_OF_CARDS; j++) {
+				if(currentCard[i].equals(player.getCard(j))) {
 					
 					// Danh dau nhung quan bai da danh
-					arrCards[j].setPlay(true);
+					player.getCard(j).setPlay(true);
 					break;
 				}
 			}
@@ -137,32 +140,32 @@ public class GamePlay {
 		this.status = status;
 	}
 
-	public int getNumOfPlayed() {
-		return numOfPlayed;
+	public int getNumOfPlayer() {
+		return numOfPlayer;
 	}
 
-	public HandCards[] getArrPlayeds() {
-		return arrPlayeds;
+	public HandCards getPlayer(int position) {
+		return arrPlayers[position];
 	}
 
-	public void setArrPlayeds(HandCards[] arrPlayeds) {
-		this.arrPlayeds = arrPlayeds;
+	public void setArrPlayers(HandCards[] arrPlayeds) {
+		this.arrPlayers = arrPlayeds;
 	}
 
-	public int getJustPlayed() {
-		return justPlayed;
+	public int getJustPlayer() {
+		return justPlayer;
 	}
 
-	public void setJustPlayed(int justPlayed) {
-		this.justPlayed = justPlayed;
+	public void setJustPlayer(int justPlayed) {
+		this.justPlayer = justPlayed;
 	}
 
-	public int getActivatingPlayed() {
-		return activatingPlayed;
+	public int getActivatingPlayer() {
+		return activatingPlayer;
 	}
 
-	public void setActivatingPlayed(int activatingPlayed) {
-		this.activatingPlayed = activatingPlayed;
+	public void setActivatingPlayer(int activatingPlayed) {
+		this.activatingPlayer = activatingPlayed;
 	}
 
 	public int getRank() {

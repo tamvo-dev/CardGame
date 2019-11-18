@@ -11,6 +11,7 @@ public class HandCards {
 	private int status;
 	private boolean isActivated;
 	private int rank;
+	private String name;
 	
 	public static final int NUM_OF_CARDS = 13;
 	public static final int STATUS_ON = 1;
@@ -23,15 +24,23 @@ public class HandCards {
 		status = STATUS_ON;
 	}
 	
-	public void showCards() {
+	public void ShowCards() {
+		
 		Rules.SortCards(arrCards);
+		System.out.println("Cards of " + name);
+		
 		for(int i=0; i<arrCards.length; i++) {
 			if(arrCards[i].isPlay() == false) {
-				// Format String
-				System.out.println(i + "    ->    " + arrCards[i].toString() + " ");
+				String line = "";
+				if(i < 10) {
+					line += " " + i + "    ->    " + arrCards[i].toString();
+				}
+				else {
+					line +=  i + "    ->    " + arrCards[i].toString();
+				}
+				System.out.println(line);
 			}
 		}
-		System.out.print("\n");
 	}
 
 	public int getNumOfSelectedCards() {
@@ -50,8 +59,8 @@ public class HandCards {
 		this.numOfRemainCards = numOfRemainCards;
 	}
 
-	public Card[] getArrCards() {
-		return arrCards;
+	public Card getCard(int position) {
+		return arrCards[position];
 	}
 
 	public void setArrCards(Card[] arrCards) {
@@ -88,6 +97,14 @@ public class HandCards {
 
 	public void setRank(int rank) {
 		this.rank = rank;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 	
