@@ -41,13 +41,17 @@ public class HandCards {
 	// isPlay = true > the cards were played so not to display that cards
 	public void ShowCards() {
 		Rules.SortCards(arrCards);
+		
+		System.out.print("[ ");
 		for(int i=0; i<arrCards.length; i++) {
 			if(arrCards[i].isPlay() == false) {
-				// Format String
-				System.out.println(i + "    ->    " + arrCards[i].toString() + " ");
+				System.out.print(i + " : " + arrCards[i].toString());
+				if(i != arrCards.length - 1) {
+					System.out.print(", ");
+				}
 			}
 		}
-		System.out.print("\n");
+		System.out.println("]");
 	}
 
 	public boolean IsPlayerWin() {

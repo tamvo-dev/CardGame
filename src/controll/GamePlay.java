@@ -31,7 +31,7 @@ public class GamePlay {
 
 	// tracking the suits that you throw, ex: 3d > single, 3d3p > double
 
-	private int currentType;
+	//private int currentType;
 
 	// because number of cards.
 	public static final int NUM_CARDS = 52;
@@ -130,6 +130,7 @@ public class GamePlay {
 
 	// check the length of cards and check the values of cards depend on single,
 	// double,...
+	/*
 	public boolean TestValid(Card[] arr) {
 
 		// throwing is not valid
@@ -145,6 +146,7 @@ public class GamePlay {
 			return false;
 		}
 	}
+	*/
 
 	// true, it means keep playing for the new round
 	public void ActivatePlayer(int currentPlayer) {
@@ -213,6 +215,7 @@ public class GamePlay {
 		this.activatingPlayer = activatingPlayed;
 	}
 
+	/*
 	public int getCurrentType() {
 		return currentType;
 	}
@@ -220,5 +223,6 @@ public class GamePlay {
 	public void setCurrentType(int currentType) {
 		this.currentType = currentType;
 	}
+	*/
 
 }

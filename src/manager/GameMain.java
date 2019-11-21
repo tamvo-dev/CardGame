@@ -42,8 +42,9 @@ public class GameMain {
 			HandCards player = gamePlay.getArrPlayers()[i];
 			
 			for(int j=0; j<HandCards.NUM_OF_CARDS; j++) {
-				Card card = player.getArrCards()[i];
+				Card card = player.getArrCards()[j];
 				if(card.getValue() == 3 && card.getType() == Card.TYPE_SPADES) {
+					
 					// nguoi co quyen danh bai
 					gamePlay.setActivatingPlayer(i);
 					break;
@@ -51,10 +52,10 @@ public class GameMain {
 			}
 		}
 		
-		startNewRound();
+		StartNewRound();
 	}
 	
-	public void startNewRound() {
+	public void StartNewRound() {
 		
 		for(int i=0; i<numOfPlayer; i++) {
 			HandCards player = gamePlay.getArrPlayers()[i];
@@ -65,6 +66,7 @@ public class GameMain {
 		int position = gamePlay.getActivatingPlayer();
 		currentPlayer = gamePlay.getArrPlayers()[position];
 		
+		System.out.println("Cards of player " + (position + 1));
 		currentPlayer.ShowCards();
 		
 		System.out.print("Please play cards: ");
@@ -85,7 +87,7 @@ public class GameMain {
 		// Kiem tra nguoi choi danh bai co hop le khong
 		if(currentType == Rules.THROWING_UNKNOWN || Rules.IsValid(currentType, arrSelCards) == false) {
 			System.out.println("Your gambling is invalid!");
-			startNewRound();
+			StartNewRound();
 		}
 		else {
 			gamePlay.Play(position);
@@ -109,7 +111,7 @@ public class GameMain {
 		while( nextPlayer != -1 && gamePlay.getStatus() == GamePlay.STATUS_ON) {
 			
 			gamePlay.setActivatingPlayer(nextPlayer);
-			ThrowingCards();
+			NextRound();
 			nextPlayer = gamePlay.NextPlayer();
 		}
 		
@@ -117,7 +119,7 @@ public class GameMain {
 		
 			int justplayer = gamePlay.getJustPlayer();
 			gamePlay.setActivatingPlayer(justplayer);
-			startNewRound();
+			StartNewRound();
 		}
 		else {
 			// ket thuc game
@@ -125,20 +127,28 @@ public class GameMain {
 		}
 	}
 	
-	public void ThrowingCards() {
+	public void NextRound() {
 		
 		int indexPlayer = gamePlay.getActivatingPlayer();
 		currentPlayer = gamePlay.getArrPlayers()[indexPlayer];
 		
 		do {
+			
 			int select = 0;
+			System.out.println("");
+			System.out.println("Cards of player " + (indexPlayer + 1));
+			currentPlayer.ShowCards();
+			System.out.println("Player " + (indexPlayer + 1) + " you want to gamble or skip ?");
+			System.out.println("1. Play");
+			System.out.println("2. Skip");
+			
 			do {
-				
-				System.out.println("Player " + (indexPlayer + 1) + " you want to gamble or skip ?");
-				System.out.println("1. Play");
-				System.out.println("2. Skip");
-				System.out.print("Enter the selection: ");
-				select = Integer.parseInt(scanner.nextLine());
+				try {
+					System.out.print("Enter the selection: ");
+					select = Integer.parseInt(scanner.nextLine());
+				}catch(Exception ex) {
+					//System.out.println("");
+				}
 			}while(select < 1 || select > 2);
 			
 			if(select == 2) {
@@ -146,7 +156,6 @@ public class GameMain {
 				return;
 			}
 			
-			currentPlayer.ShowCards();
 			System.out.print("Please play cards: ");
 			String line = scanner.nextLine();
 			String[] items = line.split(" ");
@@ -167,7 +176,7 @@ public class GameMain {
 			boolean isValid = Rules.IsValid(currentType, arrSelCards);
 			if(isValid && isWin) {
 				gamePlay.Play(indexPlayer);
-				// Kiem tra neu da danh het bai thi set rank cho nguoi choi
+				// Kiem tra neu da danh het bai thi ket thuc game
 				if(currentPlayer.IsPlayerWin()) {
 					currentPlayer.setStatus(HandCards.STATUS_OFF);
 					gamePlay.setStatus(GamePlay.STATUS_OFF);
