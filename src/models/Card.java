@@ -4,14 +4,17 @@ public class Card {
 	
 	private int value;
 	private int type;
+	// check the card was played or not
 	private boolean isPlay;
 	
+	//the value of cards
 	public static final int VALUE_J = 11;
 	public static final int VALUE_Q = 12;
 	public static final int VALUE_K = 13;
 	public static final int VALUE_A = 14;
 	public static final int VALUE_2 = 15;
 	
+	//the suits of card
 	public static final int TYPE_SPADES = 0;
 	public static final int TYPE_CLUBS = 1;
 	public static final int TYPE_DIAMONDS = 2;
@@ -51,24 +54,9 @@ public class Card {
 		this.isPlay = isPlay;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Card other = (Card) obj;
-		if (isPlay != other.isPlay)
-			return false;
-		if (type != other.type)
-			return false;
-		if (value != other.value)
-			return false;
-		return true;
-	}
 
+
+	// display cards
 	@Override
 	public String toString() {
 		String result = "";
@@ -93,7 +81,7 @@ public class Card {
 		case 15:
 			result += "2";
 			break;
-			
+	   // if value = 3 >> result = 3
 		default:
 			result += value;	
 		}

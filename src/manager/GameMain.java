@@ -7,22 +7,27 @@ import controll.Rules;
 import models.Card;
 import models.HandCards;
 
-public class GameManager {
+public class GameMain {
 
-	private GamePlay gamePlay;
-	private GameEvent gamEvent;
-	private Scanner scanner;
+	private static GamePlay gamePlay;
+	private static Scanner scanner;
+	private static int numOfPlayer;
+	
 	private HandCards currentPlayer = null;
 	private int currentType;
 	private Card[] currentCard;
-	private int numOfPlayer;
 	
-	public GameManager(GamePlay gamePlay, Scanner scanner ,GameEvent gameEvent) {
-		this.gamePlay = gamePlay;
-		this.scanner = scanner;
-		this.gamEvent = gameEvent;
-		this.numOfPlayer = gamePlay.getNumOfPlayer();
-		this.currentType = Rules.THROWING_UNKNOWN;
+	
+	public static void main(String[] args) {
+		scanner = new Scanner(System.in);
+		System.out.print("Enter the number of players: ");
+		numOfPlayer = Integer.parseInt(scanner.nextLine()); 
+		gamePlay = new GamePlay(numOfPlayer);
+		new GameMain();
+	}
+	
+	public GameMain() {
+		StartGame();
 	}
 	
 	
@@ -31,33 +36,37 @@ public class GameManager {
 		// Chia bai
 		gamePlay.Deal();
 	
-		// Cho nguoi co quan 3 bich danh dau tien
+		// Cho nguoi co quan 3 bich danh dau tien neu khong co thi mac dinh nguoi dau tien danh
 		for(int i=0; i<numOfPlayer; i++) {
 			
-			HandCards player = gamePlay.getPlayer(i);
+			HandCards player = gamePlay.getArrPlayers()[i];
 			
 			for(int j=0; j<HandCards.NUM_OF_CARDS; j++) {
-				Card card = player.getCard(j);
+				Card card = player.getArrCards()[i];
 				if(card.getValue() == 3 && card.getType() == Card.TYPE_SPADES) {
 					// nguoi co quyen danh bai
 					gamePlay.setActivatingPlayer(i);
-					FirstPlay();
+					break;
 				}
 			}
 		}
+		
+		startNewRound();
 	}
 	
-	public void FirstPlay() {
+	public void startNewRound() {
 		
 		for(int i=0; i<numOfPlayer; i++) {
-			HandCards player = gamePlay.getPlayer(i);
+			HandCards player = gamePlay.getArrPlayers()[i];
 			if(player.getStatus() != HandCards.STATUS_OFF)
 				player.setActivated(true);
 		}
 		
 		int position = gamePlay.getActivatingPlayer();
-		currentPlayer = gamePlay.getPlayer(position);
+		currentPlayer = gamePlay.getArrPlayers()[position];
+		
 		currentPlayer.ShowCards();
+		
 		System.out.print("Please play cards: ");
 		String line = scanner.nextLine();
 		String[] items = line.split(" ");
@@ -67,21 +76,28 @@ public class GameManager {
 		}
 		Card[] arrSelCards = new Card[items.length];
 		for(int i=0; i<items.length; i++) {
-			
 			int index = arrIndex[i];
-			arrSelCards[i] = currentPlayer.getCard(index);
+			arrSelCards[i] = currentPlayer.getArrCards()[index];
 		}
 		currentPlayer.setArrSelCards(arrSelCards);
 		currentType = Rules.CheckType(arrSelCards);
+		
 		// Kiem tra nguoi choi danh bai co hop le khong
 		if(currentType == Rules.THROWING_UNKNOWN || Rules.IsValid(currentType, arrSelCards) == false) {
 			System.out.println("Your gambling is invalid!");
-			FirstPlay();
+			startNewRound();
 		}
 		else {
 			gamePlay.Play(position);
 			currentCard = arrSelCards;
-			PlayGame();
+			// Kiem tra nguoi choi da thang chua
+			// Neu thang thi ket thuc game
+			// Neu khong thi cho cac nguoi choi khac danh
+			if(currentPlayer.IsPlayerWin()) {
+				EndGame();
+			}else {
+				PlayGame();
+			}
 		}
 		
 	}
@@ -90,30 +106,29 @@ public class GameManager {
 	public void PlayGame() {
 		
 		int nextPlayer = gamePlay.NextPlayer();
-		while( nextPlayer != -1) {
+		while( nextPlayer != -1 && gamePlay.getStatus() == GamePlay.STATUS_ON) {
 			
 			gamePlay.setActivatingPlayer(nextPlayer);
 			ThrowingCards();
 			nextPlayer = gamePlay.NextPlayer();
-			System.out.println("Nextplayer: " + (nextPlayer + 1));
-			System.out.println("Just: " + (gamePlay.getJustPlayer() + 1));
 		}
 		
-		if(gamePlay.getStatus() != GamePlay.STATUS_OFF) {
-			System.out.println("Fisrt play");
+		if(gamePlay.getStatus() == GamePlay.STATUS_ON) {
+		
 			int justplayer = gamePlay.getJustPlayer();
 			gamePlay.setActivatingPlayer(justplayer);
-			FirstPlay();
+			startNewRound();
 		}
 		else {
-			gamEvent.OnDestroyGame();
+			// ket thuc game
+			EndGame();
 		}
 	}
 	
 	public void ThrowingCards() {
 		
 		int indexPlayer = gamePlay.getActivatingPlayer();
-		currentPlayer = gamePlay.getPlayer(indexPlayer);
+		currentPlayer = gamePlay.getArrPlayers()[indexPlayer];
 		
 		do {
 			int select = 0;
@@ -143,7 +158,7 @@ public class GameManager {
 			for(int i=0; i<items.length; i++) {
 				
 				int index = arrIndex[i];
-				arrSelCards[i] = currentPlayer.getCard(index);
+				arrSelCards[i] = currentPlayer.getArrCards()[index];
 			}
 			currentPlayer.setArrSelCards(arrSelCards);
 			
@@ -153,19 +168,28 @@ public class GameManager {
 			if(isValid && isWin) {
 				gamePlay.Play(indexPlayer);
 				// Kiem tra neu da danh het bai thi set rank cho nguoi choi
-				if(currentPlayer.isWin()) {
-					int rank = gamePlay.getRank();
+				if(currentPlayer.IsPlayerWin()) {
 					currentPlayer.setStatus(HandCards.STATUS_OFF);
-					currentPlayer.setRank(rank);
-					gamePlay.setRank(rank + 1);
+					gamePlay.setStatus(GamePlay.STATUS_OFF);
 				}
 				return;
 			}
 			else {
 				System.out.println("Invalid gambling");
 			}
-		}while(true);
+		}while(gamePlay.getStatus() == GamePlay.STATUS_ON);
 		
+	}
+	
+	
+	public void EndGame() {
+		for(int i=0; i<numOfPlayer; i++) {
+			if(gamePlay.getArrPlayers()[i].getStatus() == HandCards.STATUS_OFF) {
+				System.out.println("Player " + (i + 1) + " winner!");
+				break;
+			}
+		}
+		System.out.println("End game!");
 	}
 	
 }

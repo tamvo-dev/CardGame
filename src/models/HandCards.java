@@ -4,47 +4,53 @@ import controll.Rules;
 
 public class HandCards {
 
-	private int numOfSelectedCards;
-	private int numOfRemainCards;
+	// store all the cards of only 1 players
 	private Card[] arrCards;
-	private Card[] arrSelCards;
-	private int status;
-	private boolean isActivated;
-	private int rank;
-	private String name;
 	
+	// store the number of cards the player want to throwing before checking
+	private Card[] arrSelCards;
+	
+	// check there are any cards in player's hand or not
+	private int status;
+	
+	// tracking the player's turn	
+	private boolean isActivated;
+	
+	
+	// the default cards of each player
 	public static final int NUM_OF_CARDS = 13;
+	
+	// you still have cards in your hand
 	public static final int STATUS_ON = 1;
+	
+	// out of cards in your hand.
 	public static final int STATUS_OFF = 0;
 	
+	
 	public HandCards() {
-		numOfRemainCards = NUM_OF_CARDS;
-		rank = -1;
+			
+		
+		// true is mean that is still playing
 		isActivated = true;
+		
+		// still playing
 		status = STATUS_ON;
 	}
 	
+	// Display the cards in player's hand 
+	// isPlay = true > the cards were played so not to display that cards
 	public void ShowCards() {
-		
 		Rules.SortCards(arrCards);
-		System.out.println("Cards of " + name);
-		
 		for(int i=0; i<arrCards.length; i++) {
 			if(arrCards[i].isPlay() == false) {
-				String line = "";
-				if(i < 10) {
-					line += " " + i + "    ->    " + arrCards[i].toString();
-				}
-				else {
-					line +=  i + "    ->    " + arrCards[i].toString();
-				}
-				System.out.println(line);
+				// Format String
+				System.out.println(i + "    ->    " + arrCards[i].toString() + " ");
 			}
 		}
+		System.out.print("\n");
 	}
-	
-	public boolean isWin() {
-		// Neu co bat ki la bai nao chua danh tuc la chua ve nhat duoc
+
+	public boolean IsPlayerWin() {
 		for(int i=0; i<arrCards.length; i++) {
 			if(arrCards[i].isPlay() == false)
 				return false;
@@ -52,24 +58,8 @@ public class HandCards {
 		return true;
 	}
 
-	public int getNumOfSelectedCards() {
-		return numOfSelectedCards;
-	}
-
-	public void setNumOfSelectedCards(int numOfSelectedCards) {
-		this.numOfSelectedCards = numOfSelectedCards;
-	}
-
-	public int getNumOfRemainCards() {
-		return numOfRemainCards;
-	}
-
-	public void setNumOfRemainCards(int numOfRemainCards) {
-		this.numOfRemainCards = numOfRemainCards;
-	}
-
-	public Card getCard(int position) {
-		return arrCards[position];
+	public Card[] getArrCards() {
+		return arrCards;
 	}
 
 	public void setArrCards(Card[] arrCards) {
@@ -99,22 +89,5 @@ public class HandCards {
 	public void setActivated(boolean isActivated) {
 		this.isActivated = isActivated;
 	}
-
-	public int getRank() {
-		return rank;
-	}
-
-	public void setRank(int rank) {
-		this.rank = rank;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-	
 	
 }
