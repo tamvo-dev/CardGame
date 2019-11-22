@@ -27,7 +27,7 @@ public class GamePlay {
 	private int activatingPlayer;
 
 	// store the cards of The [justPlayer]. delete and store constantly
-	private Card[] currentCard;
+	//private Card[] currentCard;
 
 	// tracking the suits that you throw, ex: 3d > single, 3d3p > double
 
@@ -164,7 +164,7 @@ public class GamePlay {
 	//
 	public void Play(int currentPlayer) {
 		// get the cards of the final player throwing or update the current card
-		currentCard = arrPlayers[currentPlayer].getArrSelCards();
+		Card[] arrSelCards = arrPlayers[currentPlayer].getArrSelCards();
 
 		// update current player
 		justPlayer = currentPlayer;
@@ -173,8 +173,8 @@ public class GamePlay {
 		// Bo luon cai nay
 		//Card[] arrCards = arrPlayers[currentPlayer].getArrCards();
 
-		for (int i = 0; i < currentCard.length; i++) {
-			currentCard[i].setPlay(true);
+		for (int i = 0; i < arrSelCards.length; i++) {
+			arrSelCards[i].setPlay(true);
 		}
 
 	}
