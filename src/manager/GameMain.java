@@ -13,23 +13,23 @@ public class GameMain {
 	private static Scanner scanner;
 	private static int numOfPlayer;
 
-	private HandCards currentPlayer = null;
-	private int currentType;
-	private Card[] currentCards;
+	private static HandCards currentPlayer = null;
+	private static int currentType;
+	private static Card[] currentCards;
 
 	public static void main(String[] args) {
 		scanner = new Scanner(System.in);
-		System.out.print("Enter the number of players: ");
-		numOfPlayer = Integer.parseInt(scanner.nextLine());
+		
+		do {
+			System.out.print("Enter the number of players: ");
+			numOfPlayer = Integer.parseInt(scanner.nextLine());
+		} while (numOfPlayer < 2 || numOfPlayer > 4);
+		
 		game = new GamePlay(numOfPlayer);
-		new GameMain();
-	}
-
-	public GameMain() {
 		StartGame();
 	}
 
-	public void StartGame() {
+	public static void StartGame() {
 
 		// Chia bai
 		game.Deal();
@@ -54,9 +54,8 @@ public class GameMain {
 		StartNewRound();
 	}
 
-	public void StartNewRound() {
+	public static void StartNewRound() {
 
-		System.out.println("FunStartNewRound");
 		for (int i = 0; i < numOfPlayer; i++) {
 			HandCards player = game.getArrPlayers()[i];
 			if (player.getStatus() != HandCards.STATUS_OFF)
@@ -72,29 +71,22 @@ public class GameMain {
 		boolean isValid = false;
 		do {
 
-			System.out.print("Please play cards: ");
-			String line = scanner.nextLine();
-			String[] items = line.split(" ");
-			int arrIndex[] = new int[items.length];
-			for (int i = 0; i < items.length; i++) {
-				arrIndex[i] = Integer.parseInt(items[i]);
-			}
-			Card[] arrSelCards = new Card[items.length];
-			for (int i = 0; i < items.length; i++) {
-				int index = arrIndex[i];
-				arrSelCards[i] = currentPlayer.getArrCards()[index];
-			}
-			currentPlayer.setArrSelCards(arrSelCards);
-			currentType = Rules.CheckType(arrSelCards);
+			boolean isThowing = ThrowingCards(currentPlayer);
+			
+			if(isThowing == true) {
+				Card[] arrSelCards = currentPlayer.getArrSelCards();
+				currentType = Rules.CheckType(arrSelCards);
 
-			// Kiem tra nguoi choi danh bai co hop le khong
-			if (currentType == Rules.THROWING_UNKNOWN || Rules.IsValid(currentType, arrSelCards) == false) {
-				System.out.println("Your gambling is invalid!");
-			} else {
-				isValid = true;
-				game.Play(position);
-				currentCards = arrSelCards;
+				// Kiem tra nguoi choi danh bai co hop le khong
+				if (currentType == Rules.THROWING_UNKNOWN || Rules.IsValid(currentType, arrSelCards) == false) {
+					System.out.println("Your gambling is invalid!");
+				} else {
+					isValid = true;
+					game.Play(position);
+					currentCards = arrSelCards;
+				}
 			}
+			
 		} while (isValid == false);
 
 		if (currentPlayer.IsPlayerWin()) {
@@ -105,9 +97,8 @@ public class GameMain {
 		}
 	}
 
-	public void PlayGame() {
+	public static void PlayGame() {
 
-		System.out.println("FunPlayGame");
 		int nextPlayer = game.NextPlayer();
 		while (nextPlayer != -1 && game.getStatus() == GamePlay.STATUS_ON) {
 
@@ -127,13 +118,11 @@ public class GameMain {
 		}
 	}
 
-	public void NextRound() {
+	public static void NextRound() {
 
-		System.out.println("FunNextRound");
 		int indexPlayer = game.getActivatingPlayer();
 		currentPlayer = game.getArrPlayers()[indexPlayer];
 
-		int select = 0;
 		ShowCurrentCard();
 		System.out.print("Cards of player " + (indexPlayer + 1) + " : ");
 		currentPlayer.ShowCards();
@@ -146,6 +135,7 @@ public class GameMain {
 			System.out.println("1. Play");
 			System.out.println("2. Skip");
 
+			int select = 0;
 			do {
 				try {
 					System.out.print("Enter the selection: ");
@@ -160,29 +150,23 @@ public class GameMain {
 				return;
 			}
 
-			System.out.print("Please play cards: ");
-			String line = scanner.nextLine();
-			String[] items = line.split(" ");
-			int arrIndex[] = new int[items.length];
-			for (int i = 0; i < items.length; i++) {
-				arrIndex[i] = Integer.parseInt(items[i]);
+			// Cho nguoi choi danh bai
+			boolean isThowing =  ThrowingCards(currentPlayer);
+			
+			if(isThowing == true) {
+				Card[] arrSelCards = currentPlayer.getArrSelCards();
+				// Kiem tra neu bai danh phai lon hon moi hop le
+				isWin = Rules.IsWin(currentType, arrSelCards, currentCards);
+				isValid = Rules.IsValid(currentType, arrSelCards);
+				if (isWin == false) {
+					System.out.println("Ban phai danh bai lon hon nguoi choi hien tai");
+				} else if(isValid == false) {
+					System.out.println("Type khong hop le");
+				}
 			}
-			Card[] arrSelCards = new Card[items.length];
-			for (int i = 0; i < items.length; i++) {
-
-				int index = arrIndex[i];
-				arrSelCards[i] = currentPlayer.getArrCards()[index];
-			}
-			currentPlayer.setArrSelCards(arrSelCards);
-
-			// Kiem tra neu bai danh phai lon hon moi hop le
-			isWin = Rules.IsWin(currentType, arrSelCards, currentCards);
-			isValid = Rules.IsValid(currentType, arrSelCards);
-			if (isWin == false || isValid == false) {
-				System.out.println("Invalid gambling");
-			}
-		} while (isWin == false || isValid == false);
-
+			
+		} while(isWin == false || isValid == false);
+			
 		// Cho nguoi choi danh bai
 		game.Play(indexPlayer);
 		// Cap nhat lai currentCards
@@ -194,10 +178,48 @@ public class GameMain {
 		}
 
 	}
+	
+	public static boolean ThrowingCards(HandCards player) {
 
-	public void ShowCurrentCard() {
+		System.out.print("Please play cards: ");
+		String line = scanner.nextLine();
+		
+		if(line.isBlank()) {
+			System.out.println("Khong dc de trong");
+			return false;
+		}
+		
+		String[] items = line.split(" ");
+		int arrIndex[] = new int[items.length];
+		for (int i = 0; i < items.length; i++) {
+			arrIndex[i] = Integer.parseInt(items[i]);
+			// Kiem tra index co hop le khong
+			// Index hop le nam trong 0 - 12
+			// Index hop le se la nhung quan bai chua danh
+			int index = arrIndex[i];
+			
+			if( index < 0 || index > 12) {
+				System.out.println("index khong hop le");
+				return false;
+				
+			} else if(player.getArrCards()[index].isPlay() == true) {
+				// Quan bai da duoc danh roi thi set isThowingValid = false
+				System.out.println("lua chon khong hop le");
+				return false;
+			}
+		}
+		
+		Card[] arrSelCards = new Card[items.length];
+		for (int i = 0; i < arrIndex.length; i++) {
+			int index = arrIndex[i];
+			arrSelCards[i] = player.getArrCards()[index];
+		}
+		player.setArrSelCards(arrSelCards);
+		return true;	
+	}
 
-		System.out.println("FunShowCurrentCard");
+	public static void ShowCurrentCard() {
+
 		String result = "Current cards : [ ";
 		for (int i = 0; i < currentCards.length; i++) {
 			result += currentCards[i].toString() + ", ";
@@ -208,9 +230,8 @@ public class GameMain {
 		System.out.println(result);
 	}
 
-	public void EndGame() {
+	public static void EndGame() {
 
-		System.out.println("FunEndGame");
 		for (int i = 0; i < numOfPlayer; i++) {
 			if (game.getArrPlayers()[i].getStatus() == HandCards.STATUS_OFF) {
 				System.out.println("Player " + (i + 1) + " winner!");
